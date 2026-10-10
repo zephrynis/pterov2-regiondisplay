@@ -1,0 +1,20 @@
+{
+  "$schema": "./vendor/sdk/manifest.schema.json",
+  "id": "regiondisplay",
+  "name": "Region Display",
+  "version": "1.0.0",
+  "description": "Assign countries and region labels to locations and display them on servers.",
+  "provider": "RegionDisplay\\RegionDisplayProvider",
+  "autoload": {
+    "RegionDisplay\\": "src"
+  },
+  "requires": {
+    "panel": ">=2.0.0-dev <2.1",
+    "sdk": ">=2.0.0-beta.4 <2.0.0-beta.5",
+    "php": ">=8.3 <9"
+  },
+  "ui": {
+    "entry": "dist/client.js",
+    "mode": "native"
+  }
+}
