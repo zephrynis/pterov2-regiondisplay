@@ -1,4 +1,6 @@
-# Region Display 1.0.0
+# Region Display 1.0.1
+
+Current release targets **Panel 2.0.0-beta.2 / SDK 2.0.0-beta.6**. See `SDK_PROVENANCE.md` for the pinned revision and documentation discrepancy. Compatibility and validation notes mentioning older builds below are historical. Install `release/regiondisplay-1.0.1.pteroext`.
 
 Assign a country and optional region name to a Pterodactyl v2 location. Servers inherit the region from their current node’s location, displaying a local SVG flag and name on the Servers list and beside the server name on the console.
 
@@ -12,13 +14,13 @@ Failed lookups show a small unavailable indicator without blocking native server
 
 ## Compatibility and integration
 
-Targets the native v2 extension system, Panel `>=2.0.0-dev <2.1`, SDK `>=2.0.0-beta.4 <2.0.0-beta.5`, and PHP `>=8.3 <9`. Development uses Panel checkout `39ee9508373cb48454e5fba80caafe2599ec5110`. Relevant slot registry, SDK metadata, and native server transformer matched the running local deployment during planning. Other Panel builds require verification.
+Targets the native v2 extension system, Panel `>=2.0.0-dev <2.0.0-beta.3`, SDK `>=2.0.0-beta.6 <2.0.0-beta.7`, and PHP `>=8.3 <9`. Baseline revision: `ea742d332f5861a81e502857446b8df9cb9f0254`. The Panel's compatibility API still reports `2.0.0-dev`. DOM-based console-heading placement requires browser retesting on new themes/builds.
 
 The extension contributes to `panel.locations.detail.after`, `dashboard.serverRow.name.after`, `dashboard.serverRow.after`, and `server.console.before`. On desktop (1024px and wider), the server-list badge appears inline beside the server identity, with long labels truncated and the full name available on hover. On smaller screens it occupies its own line inside each card, keeping server names and tags readable. CSS shows only the matching placement; both mounts share the same user/server query cache and do not add a duplicate lookup. It declares no component replacements and coexists with Server Tags. Third-party card replacements need to retain the native identity slot for the desktop badge; the smaller-screen row slot is outside the replacement. Core Panel files, server list queries, pagination, and navigation remain owned by the Panel.
 
 The console badge uses an extension-owned portal host beside the native heading because this SDK has no console-title slot. It does not move native nodes or change Panel source. Scoped CSS aligns the heading and badge at the left and retains the description below. Mobile uses a compact name-and-region row because the native title is hidden there. Late headings and replaced ancestor wrappers are detected during navigation. A missing native heading falls back to the slot; subscriptions and the host are removed when unmounting. This placement depends on the inspected console heading structure and requires verification after Panel updates.
 
-`vendor/sdk` is a development-only snapshot of `/opt/pterodactyl/packages/sdk` at that checkout. Preserve this provenance and the lockfile unless intentionally upgrading. The SDK Vite preset supplies native-mode builds and externalizes the shared React, SDK, and TanStack Query runtimes. `.npmrc` skips automatic peer installation because runtime peers are supplied by the Panel; the types and test dependencies used here are explicit development dependencies.
+`vendor/sdk` is a development-only snapshot of `/app/packages/sdk` in the current Panel container. Preserve its provenance and the lockfile unless intentionally upgrading. The SDK Vite preset supplies native-mode builds and externalizes the shared React, SDK, and TanStack Query runtimes. `.npmrc` skips automatic peer installation because runtime peers are supplied by the Panel; the types and test dependencies used here are explicit development dependencies.
 
 References: [v2 extensions](https://docs.pterodactyl.io/v2/extensions), [building extensions](https://docs.pterodactyl.io/v2/extensions/building), [API reference](https://docs.pterodactyl.io/v2/extensions/reference). Documentation snapshot: October 5, 2026, commit `e8a2455e83ee310a0a58e87857cf33b389ca9011`.
 
@@ -32,7 +34,7 @@ npm run check
 npm run package
 ```
 
-`check` prepares the country catalog and flag files, checks TypeScript, runs mocked frontend behavior tests, and builds the native extension. `package` creates `release/regiondisplay-1.0.0.pteroext` with the manifest at its root, PHP backend, migrations, country data, attribution, and all built assets including the frontend source map. It excludes development dependencies, the SDK snapshot, tests, and unbuilt frontend source files. `npm run assets` regenerates `resources/countries.json`, the flag license, and ignored `generated/flags` from the pinned MIT-licensed `flag-icons` package. See `resources/flag-icons.LICENSE` for attribution.
+`check` prepares the country catalog and flag files, checks TypeScript, runs mocked frontend behavior tests, and builds the native extension. `package` creates `release/regiondisplay-1.0.1.pteroext` with the manifest at its root, PHP backend, migrations, country data, attribution, and all built assets including the frontend source map. It excludes development dependencies, the SDK snapshot, tests, and unbuilt frontend source files. `npm run assets` regenerates `resources/countries.json`, the flag license, and ignored `generated/flags` from the pinned MIT-licensed `flag-icons` package. See `resources/flag-icons.LICENSE` for attribution.
 
 Backend validation runs in the Panel PHP runtime against isolated in-memory SQLite. Stage only `src`, `resources`, `database`, and `tests` in a temporary container directory and run `php /tmp/regiondisplay-backend/tests/backend.php`. The harness expects Panel code at `/app`; it does not use the persistent Panel database for fixtures. It covers administrator authorization, owner/subuser visibility, revoked access, bulk query bounds and efficiency, validation, label defaults, clearing, transfer/node-location changes, foreign-key cleanup, and migration rollback.
 
@@ -52,7 +54,7 @@ Stage and unpack the release archive into an accessible temporary directory name
 
 ```sh
 php artisan p:extension:doctor /tmp/regiondisplay-release/regiondisplay
-php artisan p:extension:install /tmp/regiondisplay-1.0.0.pteroext --enable
+php artisan p:extension:install /tmp/regiondisplay-1.0.1.pteroext --enable
 ```
 
 Reload the Panel browser after installation or update. Disabling the extension removes its UI and API routes after reload. Following Panel conventions, disabling or uninstalling keeps its stored assignments for reinstalling later.
